@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 class RequestServer extends StringRequest {
-    private static String serverIP = "88.232.192.49";
+    private static String serverIP = "78.160.50.127";
     private Map<String, String> params;
 
     RequestServer(String type, List<String> argList, Response.Listener<String> listener) {

@@ -38,8 +38,10 @@ public class Users extends AppCompatActivity{
         setContentView(R.layout.content_users);
 
         ListView lv = (ListView) findViewById(R.id.listview);
-        lv.setAdapter(new MyListAdapter(this,R.layout.userlist_item));
 
+        MyListAdapter adapter=new MyListAdapter(this, userList);
+
+        lv.setAdapter(adapter);
     }
 
     private void generateListContent(){
@@ -79,47 +81,43 @@ public class Users extends AppCompatActivity{
     }
 
     private class MyListAdapter extends ArrayAdapter<String> {
-        private int layout;
-        private MyListAdapter(Context context, int resource) {
-            super(context, resource);
-            layout = resource;
-        }
 
-        @NonNull
+        public MyListAdapter(Context context, ArrayList<String> resource) {
+            super(context,0, resource);
+        }
         @Override
-        public View getView(final int position, View convertView, @NonNull final ViewGroup parent) {
-            ViewHolder mainViewholder;
-            if(convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                convertView = inflater.inflate(layout, parent, false);
-                ViewHolder viewHolder = new ViewHolder();
-                viewHolder.thumbnail = (ImageView) convertView.findViewById(R.id.userlist_item_thumbnail);
-                viewHolder.title = (TextView) convertView.findViewById(R.id.userlist_item_text);
-                viewHolder.button = (Button) convertView.findViewById(R.id.userlist_item_button);
-                convertView.setTag(viewHolder);
+        public View getView(int position, View convertView,ViewGroup parent){
+            String item = getItem(position);
+            if(convertView == null){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.userlist_item,parent,false);
             }
-            mainViewholder = (ViewHolder) convertView.getTag();
-            mainViewholder.button.setOnClickListener(new View.OnClickListener() {
+
+            final TextView list_Txt=(TextView)convertView.findViewById(R.id.userlist_item_text);
+            Button list_But=(Button)convertView.findViewById(R.id.userlist_item_button);
+
+            list_Txt.setText(item);
+
+            list_But.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = getIntent();
-                    //Toast.makeText(getContext(), "Button was clicked("+intent.getStringExtra("username")+") for list item " + userList.get(position), Toast.LENGTH_SHORT).show();
+                    // It will change textview text :
+
                     Response.Listener<String> responseListener = new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
 
                         }
                     };
+                    Intent intent = getIntent();
                     List<String> argList = new ArrayList<>();
                     argList.add("denemeAndroid");
-                    argList.add(userList.get(position));
+                    argList.add((String) list_Txt.getText());
                     argList.add(intent.getStringExtra("username"));
                     RequestServer request = new RequestServer("friendRequest",argList,responseListener);
                     RequestQueue queue = Volley.newRequestQueue(Users.this);
                     queue.add(request);
                 }
             });
-            mainViewholder.title.setText(getItem(position));
 
             return convertView;
         }
