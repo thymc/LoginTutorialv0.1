@@ -38,6 +38,8 @@ class RequestServer extends StringRequest {
                 params.put("userName", argList.get(0));
                 params.put("locationX", argList.get(1));
                 params.put("locationY", argList.get(2));
+                params.put("comment", argList.get(3));
+                params.put("time", argList.get(4));
                 break;
             case "getTokenNo":
                 params.put("id", argList.get(0));
