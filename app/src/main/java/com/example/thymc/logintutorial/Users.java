@@ -100,7 +100,6 @@ public class Users extends AppCompatActivity{
             list_But.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // It will change textview text :
 
                     Response.Listener<String> responseListener = new Response.Listener<String>() {
                         @Override
