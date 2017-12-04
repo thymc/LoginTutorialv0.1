@@ -1,17 +1,17 @@
 package com.example.thymc.logintutorial;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.app.AlertDialog;
+import android.view.View;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private GPSTracker gps;
     private String username;
-    private String userComment;
     private String timeFrame;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
                     mTextMessage.setText(R.string.title_dashboard);
@@ -62,12 +62,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = (Button) findViewById(R.id.buttonShareLoc);
-        final EditText etComment = (EditText) findViewById(R.id.editTextComment);
+        mTextMessage = (TextView) findViewById(R.id.message);
+
 
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
 
+        Button button = (Button) findViewById(R.id.buttonShareLoc);
+        final EditText etComment = (EditText) findViewById(R.id.editTextComment);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
     }
 
     public void onRadioButtonClicked(View view) {
@@ -157,5 +158,4 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-
 }
