@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 class RequestServer extends StringRequest {
-    private static String serverIP = "78.160.50.127";
+    private static String serverIP = "88.246.31.2";
     private Map<String, String> params;
 
     RequestServer(String type, List<String> argList, Response.Listener<String> listener) {
@@ -48,6 +48,12 @@ class RequestServer extends StringRequest {
                 params.put("message", "Friend Request");
                 params.put("to", argList.get(1));
                 params.put("from", argList.get(2));
+                break;
+            case "getUserList":
+                //params.put("username", argList.get(0));
+                break;
+            case "getFriendRequestList":
+                params.put("username", argList.get(0));
                 break;
         }
     }

@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private GPSTracker gps;
     private String username;
-    private String timeFrame;
+    private String timeFrame = "always";
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -37,17 +37,17 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                    //mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                    //mTextMessage.setText(R.string.title_dashboard);
                     Intent intent = new Intent(MainActivity.this, Users.class);
                     Intent intent2 = getIntent();
                     intent.putExtra("username",intent2.getStringExtra("username"));
                     MainActivity.this.startActivity(intent);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    //mTextMessage.setText(R.string.title_notifications);
                     Intent intent3 = new Intent(MainActivity.this, UserAreaActivity.class);
                     MainActivity.this.startActivity(intent3);
                     return true;

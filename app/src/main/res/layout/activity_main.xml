@@ -22,9 +22,10 @@
                 android:id="@+id/message"
                 android:layout_width="match_parent"
                 android:layout_height="15dp"
-                android:text="@string/title_home"
+                android:text=""
                 tools:layout_editor_absoluteX="16dp"
-                tools:layout_editor_absoluteY="20dp" />
+                tools:layout_editor_absoluteY="20dp"
+                tools:ignore="MissingConstraints" />
 
             <TextView
                 android:id="@+id/textViewComment"
@@ -34,7 +35,8 @@
                 android:layout_marginTop="40dp"
                 android:text="Comment"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginLeft="16dp" />
 
             <EditText
                 android:id="@+id/editTextComment"
@@ -47,7 +49,9 @@
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewComment" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewComment"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="16dp" />
 
             <TextView
                 android:id="@+id/textViewTimeFrame"
@@ -57,7 +61,8 @@
                 android:layout_marginTop="44dp"
                 android:text="Time Frame"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextComment" />
+                app:layout_constraintTop_toBottomOf="@+id/editTextComment"
+                android:layout_marginLeft="16dp" />
 
             <RadioGroup
                 android:id="@+id/radioGroupTimeFrame"
@@ -70,7 +75,9 @@
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewTimeFrame">
+                app:layout_constraintTop_toBottomOf="@+id/textViewTimeFrame"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="16dp">
 
                 <RadioButton
                     android:id="@+id/radioButtonMorn"
