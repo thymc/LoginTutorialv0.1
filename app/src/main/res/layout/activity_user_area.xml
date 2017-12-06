@@ -45,16 +45,16 @@
 
     <EditText
         android:id="@+id/locationView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Coordinates: "
         android:layout_below="@+id/bShowLocation"
-        android:layout_toRightOf="@+id/tvWelcomeMsg"
-        android:layout_marginTop="14dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/bNotification"

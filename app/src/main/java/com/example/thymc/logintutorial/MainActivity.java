@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent3 = new Intent(MainActivity.this, UserAreaActivity.class);
                     MainActivity.this.startActivity(intent3);
                     return true;
+                case R.id.map_notifications:
+                    //mTextMessage.setText(R.string.title_notifications);
+
+                    return true;
             }
             return false;
         }

@@ -87,6 +87,7 @@ public class Users extends AppCompatActivity{
         }
         @Override
         public View getView(int position, View convertView,ViewGroup parent){
+            convertView = null;
             String item = getItem(position);
             if(convertView == null){
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.userlist_item,parent,false);
