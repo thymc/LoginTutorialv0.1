@@ -1,6 +1,7 @@
 package com.example.thymc.logintutorial;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +34,10 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,6 +172,42 @@ public class MapActivity extends AppCompatActivity implements
                 }
             }
         }*/
+        List<String> argList = new ArrayList<>();
+        Intent intent = getIntent();
+        argList.add(intent.getStringExtra("username"));
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if (success) {
+                        JSONArray aExpires = jsonResponse.getJSONArray("expiresList");
+                        JSONArray aKey = jsonResponse.getJSONArray("keyList");
+                        JSONArray aLocX = jsonResponse.getJSONArray("locXList");
+                        JSONArray aLocY = jsonResponse.getJSONArray("locYList");
+
+                        for (int i=0;i<aExpires.length();i++){
+                            long expires = Long.parseLong(String.valueOf(aExpires.get(i)));
+                            if(System.currentTimeMillis() < expires) {
+                                String key = String.valueOf(aKey.get(i));
+                                double lat = Double.parseDouble(String.valueOf(aLocX.get(i)));
+                                double lng = Double.parseDouble(String.valueOf(aLocY.get(i)));
+                                addMarker(key, new LatLng(lat, lng));
+                            }
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+        RequestServer registerRequest = new RequestServer("getGeofence",argList,responseListener);
+        RequestQueue queue = Volley.newRequestQueue(MapActivity.this);
+        queue.add(registerRequest);
     }
 
     @Override
@@ -229,7 +270,8 @@ public class MapActivity extends AppCompatActivity implements
     private void saveToDb(String key, LatLng latLng, long expires){
 
         List<String> argList = new ArrayList<>();
-        argList.add("deneme");
+        Intent intent = getIntent();
+        argList.add(intent.getStringExtra("username"));
         argList.add(key);
         argList.add(String.valueOf(expires));
         argList.add(String.valueOf(latLng.latitude));
@@ -288,6 +330,7 @@ public class MapActivity extends AppCompatActivity implements
                 public void onResult(@NonNull Status status) {
                     if (status.isSuccess()) {
                         //GeofenceStorage.removeGeofence(requestId);
+                        removeGeofence(requestId);
                         Toast.makeText(MapActivity.this, getString(R.string.geofences_removed), Toast.LENGTH_SHORT).show();
                         reloadMapMarkers();
                     } else {
@@ -303,4 +346,23 @@ public class MapActivity extends AppCompatActivity implements
         }
     }
 
+    private void removeGeofence(String requestID){
+
+        List<String> argList = new ArrayList<>();
+        Intent intent = getIntent();
+        argList.add(intent.getStringExtra("username"));
+        argList.add(requestID);
+
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        };
+
+        RequestServer registerRequest = new RequestServer("removeGeofence",argList,responseListener);
+        RequestQueue queue = Volley.newRequestQueue(MapActivity.this);
+        queue.add(registerRequest);
+    }
 }

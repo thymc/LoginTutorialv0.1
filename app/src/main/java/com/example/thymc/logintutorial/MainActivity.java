@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            Intent intent2 = getIntent();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     //mTextMessage.setText(R.string.title_home);
@@ -43,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_dashboard:
                     //mTextMessage.setText(R.string.title_dashboard);
                     Intent intent = new Intent(MainActivity.this, ListOperation.class);
-                    Intent intent2 = getIntent();
                     intent.putExtra("username",intent2.getStringExtra("username"));
                     MainActivity.this.startActivity(intent);
                     return true;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.map_notifications:
                     //mTextMessage.setText(R.string.title_notifications);
                     Intent intent4= new Intent(MainActivity.this, MapActivity.class);
+                    intent4.putExtra("username",intent2.getStringExtra("username"));
                     MainActivity.this.startActivity(intent4);
                     return true;
             }

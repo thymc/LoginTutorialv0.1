@@ -73,6 +73,13 @@ public class RequestServer extends StringRequest {
                 params.put("lat", argList.get(3));
                 params.put("long", argList.get(4));
                 break;
+            case "getGeofence":
+                params.put("userName", argList.get(0));
+                break;
+            case "removeGeofence":
+                params.put("userName", argList.get(0));
+                params.put("reqID", argList.get(1));
+                break;
         }
     }
 
