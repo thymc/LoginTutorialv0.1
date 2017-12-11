@@ -6,7 +6,7 @@
     android:weightSum="1">
 
     <ImageView
-        android:id="@+id/requestlist_item_thumbnail"
+        android:id="@+id/friendlist_item_thumbnail"
         android:layout_width="65dp"
         android:layout_height="65dp"
         android:src="@drawable/ic_user"
@@ -15,26 +15,24 @@
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:id="@+id/userlist_item_text"
+        android:id="@+id/friendlist_item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="TextView"
-        android:layout_alignBottom="@+id/requestlist_item_thumbnail"
-        android:layout_toRightOf="@+id/requestlist_item_thumbnail"
-        android:layout_toEndOf="@+id/requestlist_item_thumbnail"
+        android:layout_alignBottom="@+id/friendlist_item_thumbnail"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="13dp"
         android:layout_marginStart="13dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_toEndOf="@+id/friendlist_item_thumbnail"
+        android:layout_toRightOf="@+id/friendlist_item_thumbnail"
+        android:text="TextView"
+        android:textSize="18sp" />
 
-    <Button
-        android:id="@+id/requestlist_item_button_accept"
+    <ImageButton
+        android:id="@+id/friendlist_item_button_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add"
-        android:layout_alignBaseline="@+id/userlist_item_text"
-        android:layout_alignBottom="@+id/userlist_item_text"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignBottom="@+id/friendlist_item_thumbnail"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_menu_delete" />
 
 </RelativeLayout>

@@ -9,11 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class RequestServer extends StringRequest {
-    private static String serverIP = "88.246.31.2";
+public class RequestServer extends StringRequest {
+    private static String serverIP = "85.102.90.148";
     private Map<String, String> params;
 
-    RequestServer(String type, List<String> argList, Response.Listener<String> listener) {
+    public RequestServer(String type, List<String> argList, Response.Listener<String> listener) {
         super(Request.Method.POST,"http://"+serverIP+":8080/bildirim/"+type, listener, null);
         params = new HashMap<>();
         requestType(type,argList);
@@ -50,10 +50,28 @@ class RequestServer extends StringRequest {
                 params.put("from", argList.get(2));
                 break;
             case "getUserList":
-                //params.put("username", argList.get(0));
+                params.put("userName", argList.get(0));
                 break;
             case "getFriendRequestList":
-                params.put("username", argList.get(0));
+                params.put("userName", argList.get(0));
+                break;
+            case "acceptFriendRequestList":
+                params.put("userName", argList.get(0));
+                params.put("follower", argList.get(1));
+                break;
+            case "declineFriendRequestList":
+                params.put("userName", argList.get(0));
+                params.put("follower", argList.get(1));
+                break;
+            case "getFriendsList":
+                params.put("userName", argList.get(0));
+                break;
+            case "saveGeofence":
+                params.put("userName", argList.get(0));
+                params.put("key", argList.get(1));
+                params.put("expires", argList.get(2));
+                params.put("lat", argList.get(3));
+                params.put("long", argList.get(4));
                 break;
         }
     }

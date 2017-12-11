@@ -16,6 +16,7 @@ import android.view.View;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.thymc.logintutorial.geofence.GPSTracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_dashboard:
                     //mTextMessage.setText(R.string.title_dashboard);
-                    Intent intent = new Intent(MainActivity.this, Users.class);
+                    Intent intent = new Intent(MainActivity.this, ListOperation.class);
                     Intent intent2 = getIntent();
                     intent.putExtra("username",intent2.getStringExtra("username"));
                     MainActivity.this.startActivity(intent);
@@ -53,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.map_notifications:
                     //mTextMessage.setText(R.string.title_notifications);
-
+                    Intent intent4= new Intent(MainActivity.this, MapActivity.class);
+                    MainActivity.this.startActivity(intent4);
                     return true;
             }
             return false;

@@ -15,26 +15,32 @@
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:id="@+id/userlist_item_text"
+        android:id="@+id/requestlist_item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="TextView"
         android:layout_alignBottom="@+id/requestlist_item_thumbnail"
-        android:layout_toRightOf="@+id/requestlist_item_thumbnail"
-        android:layout_toEndOf="@+id/requestlist_item_thumbnail"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="13dp"
         android:layout_marginStart="13dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_toEndOf="@+id/requestlist_item_thumbnail"
+        android:layout_toRightOf="@+id/requestlist_item_thumbnail"
+        android:text="TextView"
+        android:textSize="18sp" />
 
-    <Button
+    <ImageButton
         android:id="@+id/requestlist_item_button_accept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add"
-        android:layout_alignBaseline="@+id/userlist_item_text"
-        android:layout_alignBottom="@+id/userlist_item_text"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignBottom="@+id/requestlist_item_thumbnail"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_input_add" />
+
+    <ImageButton
+        android:id="@+id/requestlist_item_button_decline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/requestlist_item_button_accept"
+        android:layout_toStartOf="@+id/requestlist_item_button_accept"
+        android:src="@android:drawable/ic_delete" />
 
 </RelativeLayout>

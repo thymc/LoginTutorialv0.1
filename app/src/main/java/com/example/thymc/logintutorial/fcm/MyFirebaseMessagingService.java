@@ -1,4 +1,4 @@
-package com.example.thymc.logintutorial;
+package com.example.thymc.logintutorial.fcm;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,6 +8,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
+import com.example.thymc.logintutorial.R;
+import com.example.thymc.logintutorial.UserAreaActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

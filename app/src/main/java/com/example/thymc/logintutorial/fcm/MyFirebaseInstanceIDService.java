@@ -1,12 +1,12 @@
-package com.example.thymc.logintutorial;
+package com.example.thymc.logintutorial.fcm;
 
 
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.thymc.logintutorial.RequestServer;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 

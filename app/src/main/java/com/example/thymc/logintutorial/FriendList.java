@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,19 +22,19 @@ import com.android.volley.toolbox.Volley;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Users extends ListActivity {
+public class FriendList extends ListActivity {
 
     private Runnable viewParts;
     private MyListAdapter adapter;
-    private ArrayList<User> userList = new ArrayList<User>();
+    private ArrayList<Friend> friendList = new ArrayList<Friend>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //generateListContent();
-        setContentView(R.layout.content_users);
+        setContentView(R.layout.content_friends);
 
 
-        adapter = new MyListAdapter(this,R.layout.userlist_item, userList);
+        adapter = new MyListAdapter(this,R.layout.friendlist_item, friendList);
         setListAdapter(adapter);
 
         viewParts = new Runnable(){
@@ -57,11 +58,11 @@ public class Users extends ListActivity {
 
 
             Intent intent = getIntent();
-            ArrayList<String> argUserList = new ArrayList<>(intent.getStringArrayListExtra("userList"));
+            ArrayList<String> argUserList = new ArrayList<>(intent.getStringArrayListExtra("friendList"));
             for(String s:argUserList){
-                userList.add(new User(s));
+                friendList.add(new Friend(s));
             }
-            adapter = new MyListAdapter(Users.this, R.layout.userlist_item, userList);
+            adapter = new MyListAdapter(FriendList.this, R.layout.friendlist_item, friendList);
 
             // display the list.
             setListAdapter(adapter);
@@ -69,51 +70,53 @@ public class Users extends ListActivity {
     };
 
 
-    private class MyListAdapter extends ArrayAdapter<User> {
+    private class MyListAdapter extends ArrayAdapter<Friend> {
 
-        private ArrayList<User> objects;
-        public MyListAdapter(Context context, int textViewResourceId, ArrayList<User> objects) {
+        private ArrayList<Friend> objects;
+        public MyListAdapter(Context context, int textViewResourceId, ArrayList<Friend> objects) {
             super(context,textViewResourceId, objects);
             this.objects = objects;
         }
         @Override
         public View getView(int position, View convertView,ViewGroup parent){
-            User item = objects.get(position);
+            Friend item = objects.get(position);
             if(convertView == null){
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.userlist_item,parent,false);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.friendlist_item,parent,false);
             }
 
-            final TextView list_Txt=(TextView)convertView.findViewById(R.id.userlist_item_text);
-            Button list_But=(Button)convertView.findViewById(R.id.requestlist_item_button_accept);
+            final TextView list_Txt=(TextView)convertView.findViewById(R.id.friendlist_item_text);
+            ImageButton list_A_But=(ImageButton)convertView.findViewById(R.id.friendlist_item_button_delete);
 
             list_Txt.setText((CharSequence) item.title);
 
-            list_But.setOnClickListener(new View.OnClickListener() {
+            list_A_But.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    /*
                     Response.Listener<String> responseListener = new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            if(response.equals("success")){
 
-                            finish();
-                            Intent intent2 = getIntent();
-                            Intent intent = new Intent(Users.this, Users.class);
-                            intent.putExtra("username",intent2.getStringExtra("username"));
-                            ArrayList<String> argUserList = new ArrayList<>(intent2.getStringArrayListExtra("userList"));
-                            argUserList.remove((String) list_Txt.getText());
-                            intent.putExtra("userList",argUserList);
-                            Users.this.startActivity(intent);
+                                finish();
+                                Intent intent2 = getIntent();
+                                Intent intent = new Intent(FriendList.this, FriendList.class);
+                                intent.putExtra("username",intent2.getStringExtra("username"));
+                                ArrayList<String> argUserList = new ArrayList<>(intent2.getStringArrayListExtra("friendList"));
+                                argUserList.remove((String) list_Txt.getText());
+                                intent.putExtra("friendList",argUserList);
+                                FriendList.this.startActivity(intent);
+                            }
                         }
                     };
                     Intent intent = getIntent();
                     List<String> argList = new ArrayList<>();
-                    argList.add("denemeAndroid");
-                    argList.add((String) list_Txt.getText());
                     argList.add(intent.getStringExtra("username"));
-                    RequestServer request = new RequestServer("friendRequest",argList,responseListener);
-                    RequestQueue queue = Volley.newRequestQueue(Users.this);
-                    queue.add(request);
+                    argList.add((String) list_Txt.getText());
+                    RequestServer request = new RequestServer("deleteFriend",argList,responseListener);
+                    RequestQueue queue = Volley.newRequestQueue(FriendList.this);
+                    queue.add(request);*/
+
                 }
             });
 
@@ -121,11 +124,11 @@ public class Users extends ListActivity {
         }
     }
 
-    public class User{
+    public class Friend{
         ImageView thumbnail;
         String title;
-        Button button;
-        User(String text){
+        ImageButton dButton;
+        Friend(String text){
             title = text;
         }
     }
