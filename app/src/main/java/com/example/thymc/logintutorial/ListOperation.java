@@ -71,9 +71,7 @@ public class ListOperation extends AppCompatActivity {
                         JSONArray jArray = jsonResponse.getJSONArray("userList");
 
                         for (int i=0;i<jArray.length();i++){
-                            if(!username.equals(jArray.getString(i))){
                                 userList.add(jArray.getString(i));
-                            }
                         }
 
 

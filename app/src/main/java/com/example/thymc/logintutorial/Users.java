@@ -59,6 +59,7 @@ public class Users extends ListActivity {
             Intent intent = getIntent();
             ArrayList<String> argUserList = new ArrayList<>(intent.getStringArrayListExtra("userList"));
             for(String s:argUserList){
+
                 userList.add(new User(s));
             }
             adapter = new MyListAdapter(Users.this, R.layout.userlist_item, userList);
