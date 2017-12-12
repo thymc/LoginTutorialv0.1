@@ -36,10 +36,12 @@ public class RequestServer extends StringRequest {
                 break;
             case "saveNotification":
                 params.put("userName", argList.get(0));
-                params.put("locationX", argList.get(1));
-                params.put("locationY", argList.get(2));
-                params.put("comment", argList.get(3));
-                params.put("time", argList.get(4));
+                params.put("key", argList.get(1));
+                params.put("expires", argList.get(2));
+                params.put("lat", argList.get(3));
+                params.put("long", argList.get(4));
+                params.put("comment", argList.get(5));
+                params.put("time", argList.get(6));
                 break;
             case "getTokenNo":
                 params.put("id", argList.get(0));
@@ -72,6 +74,8 @@ public class RequestServer extends StringRequest {
                 params.put("expires", argList.get(2));
                 params.put("lat", argList.get(3));
                 params.put("long", argList.get(4));
+                params.put("comment", argList.get(5));
+                params.put("time", argList.get(6));
                 break;
             case "getGeofence":
                 params.put("userName", argList.get(0));

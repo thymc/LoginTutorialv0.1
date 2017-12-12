@@ -9,14 +9,21 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.thymc.logintutorial.geofence.GPSTracker;
 import com.example.thymc.logintutorial.geofence.GeofenceTransitionIntentService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -47,7 +54,7 @@ public class MapActivity extends AppCompatActivity implements
     private static final String TAG = "MapActivity";
     public static final String SHARED_PREFERENCES_NAME = BuildConfig.APPLICATION_ID + ".SHARED_PREFERENCES_NAME";
     public static final String NEW_GEOFENCE_NUMBER = BuildConfig.APPLICATION_ID + ".NEW_GEOFENCE_NUMBER";
-    public static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
+    public static final long GEOFENCE_EXPIRATION_IN_HOURS = 744;
     public static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS = GEOFENCE_EXPIRATION_IN_HOURS * 60 * 60 * 1000;
     public static final float GEOFENCE_RADIUS_IN_METERS = 100; // 100 m
     private static final int PERMISSIONS_REQUEST = 105;
@@ -58,6 +65,9 @@ public class MapActivity extends AppCompatActivity implements
     private SharedPreferences mSharedPreferences;
     private GoogleMap googleMap;
 
+    private String timeFrame = "always";
+
+    EditText etComment = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +81,80 @@ public class MapActivity extends AppCompatActivity implements
         mGeofencePendingIntent = null;
         mSharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         buildGoogleApiClient();
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder adbuilder = new AlertDialog.Builder(MapActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_sharelocation, null);
+
+                etComment = (EditText) mView.findViewById(R.id.editTextComment);
+                Button button = (Button) mView.findViewById(R.id.buttonShareLoc);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        double latitude = 0,longitude = 0;
+                        GPSTracker gps = new GPSTracker(MapActivity.this);
+                        if(gps.canGetLocation()) {
+                            latitude = gps.getLatitude();
+                            longitude = gps.getLongitude();
+                        } else {
+                            gps.showSettingsAlert();
+                        }
+                        onMapClick(new LatLng(latitude,longitude));
+                    }
+                });
+
+                RadioButton.OnClickListener radioListener =
+                        new RadioButton.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View view) {
+                                // Is the button now checked?
+                                boolean checked = ((RadioButton) view).isChecked();
+
+                                // Check which radio button was clicked
+                                switch(view.getId()) {
+                                    case R.id.radioButtonMorn:
+                                        if (checked)
+                                            // sabah
+                                            timeFrame = "morning";
+                                        break;
+                                    case R.id.radioButtonNoon:
+                                        if (checked)
+                                            // öğle
+                                            timeFrame = "noon";
+                                        break;
+                                    case R.id.radioButtonEve:
+                                        if (checked)
+                                            // akşam
+                                            timeFrame = "evening";
+                                        break;
+                                    case R.id.radioButtonAlw:
+                                        if (checked)
+                                            // her zaman
+                                            timeFrame = "always";
+                                        break;
+                                }
+                            }
+                        };
+                RadioButton rbMorn = (RadioButton) mView.findViewById(R.id.radioButtonMorn);
+                rbMorn.setOnClickListener(radioListener);
+                RadioButton rbNoon = (RadioButton) mView.findViewById(R.id.radioButtonNoon);
+                rbNoon.setOnClickListener(radioListener);
+                RadioButton rbEve = (RadioButton) mView.findViewById(R.id.radioButtonEve);
+                rbEve.setOnClickListener(radioListener);
+                RadioButton rbAlw = (RadioButton) mView.findViewById(R.id.radioButtonAlw);
+                rbAlw.setOnClickListener(radioListener);
+
+                adbuilder.setView(mView);
+                AlertDialog dialog = adbuilder.create();
+                dialog.show();
+            }
+
+        });
     }
 
     /**
@@ -151,6 +235,17 @@ public class MapActivity extends AppCompatActivity implements
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST);
             return;
         }
+        TextView lat = (TextView)findViewById(R.id.lat);
+        TextView lon = (TextView)findViewById(R.id.lon);
+        GPSTracker gps = new GPSTracker(MapActivity.this);
+        if(gps.canGetLocation()) {
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            lat.setText("Latitude:"+Double.toString(latitude));
+            lon.setText("Longitude:"+Double.toString(longitude));
+        } else {
+            gps.showSettingsAlert();
+        }
         map.setMyLocationEnabled(true);
         map.setOnMapClickListener(this);
         map.setOnMarkerClickListener(this);
@@ -186,6 +281,8 @@ public class MapActivity extends AppCompatActivity implements
                         JSONArray aKey = jsonResponse.getJSONArray("keyList");
                         JSONArray aLocX = jsonResponse.getJSONArray("locXList");
                         JSONArray aLocY = jsonResponse.getJSONArray("locYList");
+                        JSONArray aComment = jsonResponse.getJSONArray("commentList");
+                        JSONArray aTime = jsonResponse.getJSONArray("timeframeList");
 
                         for (int i=0;i<aExpires.length();i++){
                             long expires = Long.parseLong(String.valueOf(aExpires.get(i)));
@@ -232,7 +329,7 @@ public class MapActivity extends AppCompatActivity implements
         }
         final String key = getNewGeofenceNumber() + "";
         final long expTime = System.currentTimeMillis() + GEOFENCE_EXPIRATION_IN_MILLISECONDS;
-        addMarker(key, latLng);
+        addMarker2(key, latLng);
         Geofence geofence = new Geofence.Builder()
                 .setRequestId(key)
                 .setCircularRegion(
@@ -277,7 +374,12 @@ public class MapActivity extends AppCompatActivity implements
         argList.add(String.valueOf(latLng.latitude));
         argList.add(String.valueOf(latLng.longitude));
 
-
+        if(etComment != null){
+            argList.add(etComment.getText().toString());
+        }else {
+            argList.add("test");
+        }
+        argList.add(timeFrame);
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -300,6 +402,18 @@ public class MapActivity extends AppCompatActivity implements
                 .radius(GEOFENCE_RADIUS_IN_METERS)
                 .strokeColor(Color.RED)
                 .fillColor(Color.parseColor("#80ff0000")));
+    }
+
+    private void addMarker2(String key, LatLng latLng) {
+        googleMap.addMarker(new MarkerOptions()
+                .title("G:" + key)
+                .snippet("Click here if you want delete this geofence")
+                .position(latLng));
+        googleMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(GEOFENCE_RADIUS_IN_METERS)
+                .strokeColor(Color.BLUE)
+                .fillColor(Color.parseColor("#800000ff")));
     }
 
     private int getNewGeofenceNumber(){
