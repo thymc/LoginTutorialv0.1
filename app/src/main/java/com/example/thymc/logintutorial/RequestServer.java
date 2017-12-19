@@ -84,6 +84,8 @@ public class RequestServer extends StringRequest {
                 params.put("userName", argList.get(0));
                 params.put("reqID", argList.get(1));
                 break;
+            case "getGeofences":
+                break;
         }
     }
 

@@ -23,8 +23,8 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
-import com.example.thymc.logintutorial.geofence.GPSTracker;
-import com.example.thymc.logintutorial.geofence.GeofenceTransitionIntentService;
+import com.example.thymc.logintutorial.geo.GPSTracker;
+import com.example.thymc.logintutorial.geo.GeofenceTransitionIntentService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -50,11 +50,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements
-        ConnectionCallbacks, OnConnectionFailedListener, OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
+        ConnectionCallbacks, OnConnectionFailedListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
     private static final String TAG = "MapActivity";
     public static final String SHARED_PREFERENCES_NAME = BuildConfig.APPLICATION_ID + ".SHARED_PREFERENCES_NAME";
     public static final String NEW_GEOFENCE_NUMBER = BuildConfig.APPLICATION_ID + ".NEW_GEOFENCE_NUMBER";
-    public static final long GEOFENCE_EXPIRATION_IN_HOURS = 744;
+    public static final long GEOFENCE_EXPIRATION_IN_HOURS = 24000;
     public static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS = GEOFENCE_EXPIRATION_IN_HOURS * 60 * 60 * 1000;
     public static final float GEOFENCE_RADIUS_IN_METERS = 100; // 100 m
     private static final int PERMISSIONS_REQUEST = 105;
@@ -68,10 +68,14 @@ public class MapActivity extends AppCompatActivity implements
     private String timeFrame = "always";
 
     EditText etComment = null;
+    String username = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        Intent intent = getIntent();
+        username =intent.getStringExtra("username");
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
@@ -86,26 +90,10 @@ public class MapActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder adbuilder = new AlertDialog.Builder(MapActivity.this);
+                final AlertDialog.Builder adbuilder = new AlertDialog.Builder(MapActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_sharelocation, null);
 
                 etComment = (EditText) mView.findViewById(R.id.editTextComment);
-                Button button = (Button) mView.findViewById(R.id.buttonShareLoc);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        double latitude = 0,longitude = 0;
-                        GPSTracker gps = new GPSTracker(MapActivity.this);
-                        if(gps.canGetLocation()) {
-                            latitude = gps.getLatitude();
-                            longitude = gps.getLongitude();
-                        } else {
-                            gps.showSettingsAlert();
-                        }
-                        onMapClick(new LatLng(latitude,longitude));
-                    }
-                });
 
                 RadioButton.OnClickListener radioListener =
                         new RadioButton.OnClickListener()
@@ -150,8 +138,27 @@ public class MapActivity extends AppCompatActivity implements
                 rbAlw.setOnClickListener(radioListener);
 
                 adbuilder.setView(mView);
-                AlertDialog dialog = adbuilder.create();
+                final AlertDialog dialog = adbuilder.create();
                 dialog.show();
+
+                Button button = (Button) mView.findViewById(R.id.buttonShareLoc);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        double latitude = 0,longitude = 0;
+                        GPSTracker gps = new GPSTracker(MapActivity.this);
+                        if(gps.canGetLocation()) {
+                            latitude = gps.getLatitude();
+                            longitude = gps.getLongitude();
+                        } else {
+                            gps.showSettingsAlert();
+                        }
+                        nMapClick(new LatLng(latitude,longitude));
+
+                        dialog.cancel();
+                    }
+                });
             }
 
         });
@@ -247,7 +254,7 @@ public class MapActivity extends AppCompatActivity implements
             gps.showSettingsAlert();
         }
         map.setMyLocationEnabled(true);
-        map.setOnMapClickListener(this);
+        //map.setOnMapClickListener(this);
         map.setOnMarkerClickListener(this);
         map.setOnInfoWindowClickListener(this);
 
@@ -268,8 +275,7 @@ public class MapActivity extends AppCompatActivity implements
             }
         }*/
         List<String> argList = new ArrayList<>();
-        Intent intent = getIntent();
-        argList.add(intent.getStringExtra("username"));
+        argList.add(username);
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -277,6 +283,7 @@ public class MapActivity extends AppCompatActivity implements
                     JSONObject jsonResponse = new JSONObject(response);
                     boolean success = jsonResponse.getBoolean("success");
                     if (success) {
+                        JSONArray sender = jsonResponse.getJSONArray("username");
                         JSONArray aExpires = jsonResponse.getJSONArray("expiresList");
                         JSONArray aKey = jsonResponse.getJSONArray("keyList");
                         JSONArray aLocX = jsonResponse.getJSONArray("locXList");
@@ -285,12 +292,22 @@ public class MapActivity extends AppCompatActivity implements
                         JSONArray aTime = jsonResponse.getJSONArray("timeframeList");
 
                         for (int i=0;i<aExpires.length();i++){
-                            long expires = Long.parseLong(String.valueOf(aExpires.get(i)));
-                            if(System.currentTimeMillis() < expires) {
-                                String key = String.valueOf(aKey.get(i));
-                                double lat = Double.parseDouble(String.valueOf(aLocX.get(i)));
-                                double lng = Double.parseDouble(String.valueOf(aLocY.get(i)));
-                                addMarker(key, new LatLng(lat, lng));
+                            if(String.valueOf(sender.get(i)).equals(username)){
+                                long expires = Long.parseLong(String.valueOf(aExpires.get(i)));
+                                if (System.currentTimeMillis() < expires) {
+                                    String key = String.valueOf(aKey.get(i));
+                                    double lat = Double.parseDouble(String.valueOf(aLocX.get(i)));
+                                    double lng = Double.parseDouble(String.valueOf(aLocY.get(i)));
+                                    addMarker(key, new LatLng(lat, lng), String.valueOf(sender.get(i)), String.valueOf(aComment.get(i)));
+                                }
+                            }else {
+                                long expires = Long.parseLong(String.valueOf(aExpires.get(i)));
+                                if (System.currentTimeMillis() < expires) {
+                                    String key = String.valueOf(aKey.get(i));
+                                    double lat = Double.parseDouble(String.valueOf(aLocX.get(i)));
+                                    double lng = Double.parseDouble(String.valueOf(aLocY.get(i)));
+                                    addFriendMarker(key, new LatLng(lat, lng), String.valueOf(sender.get(i)), String.valueOf(aComment.get(i)));
+                                }
                             }
                         }
                     }
@@ -321,15 +338,14 @@ public class MapActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onMapClick(final LatLng latLng) {
+    public void nMapClick(final LatLng latLng) {
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(this, getString(R.string.not_connected), Toast.LENGTH_SHORT).show();
             return;
         }
-        final String key = getNewGeofenceNumber() + "";
+        final String key = username+";"+getNewGeofenceNumber() + "";
         final long expTime = System.currentTimeMillis() + GEOFENCE_EXPIRATION_IN_MILLISECONDS;
-        addMarker2(key, latLng);
+        addMarker(key, latLng,username,etComment.getText().toString());
         Geofence geofence = new Geofence.Builder()
                 .setRequestId(key)
                 .setCircularRegion(
@@ -367,8 +383,7 @@ public class MapActivity extends AppCompatActivity implements
     private void saveToDb(String key, LatLng latLng, long expires){
 
         List<String> argList = new ArrayList<>();
-        Intent intent = getIntent();
-        argList.add(intent.getStringExtra("username"));
+        argList.add(username);
         argList.add(key);
         argList.add(String.valueOf(expires));
         argList.add(String.valueOf(latLng.latitude));
@@ -392,16 +407,28 @@ public class MapActivity extends AppCompatActivity implements
         queue.add(registerRequest);
     }
 
-    private void addMarker(String key, LatLng latLng) {
+    private void addMarker(String key, LatLng latLng,String sender,String comment) {
         googleMap.addMarker(new MarkerOptions()
-                .title("G:" + key)
-                .snippet("Click here if you want delete this geofence")
+                .title(key)
+                .snippet("Comment:"+comment+"  - Click here if you want delete")
                 .position(latLng));
         googleMap.addCircle(new CircleOptions()
                 .center(latLng)
                 .radius(GEOFENCE_RADIUS_IN_METERS)
                 .strokeColor(Color.RED)
                 .fillColor(Color.parseColor("#80ff0000")));
+    }
+
+    private void addFriendMarker(String key, LatLng latLng,String sender,String comment) {
+        googleMap.addMarker(new MarkerOptions()
+                .title(key)
+                .snippet("Comment:"+comment+"  - Click here if you want delete")
+                .position(latLng));
+        googleMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(GEOFENCE_RADIUS_IN_METERS)
+                .strokeColor(Color.BLACK)
+                .fillColor(Color.parseColor("#80000000")));
     }
 
     private void addMarker2(String key, LatLng latLng) {
@@ -431,7 +458,8 @@ public class MapActivity extends AppCompatActivity implements
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        final String requestId = marker.getTitle().split(":")[1];
+        //final String requestId = marker.getTitle().split(":")[1];
+        final String requestId = marker.getTitle();
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(this, getString(R.string.not_connected), Toast.LENGTH_SHORT).show();
             return;
@@ -463,8 +491,7 @@ public class MapActivity extends AppCompatActivity implements
     private void removeGeofence(String requestID){
 
         List<String> argList = new ArrayList<>();
-        Intent intent = getIntent();
-        argList.add(intent.getStringExtra("username"));
+        argList.add(username);
         argList.add(requestID);
 
 

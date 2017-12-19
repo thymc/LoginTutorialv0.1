@@ -1,4 +1,4 @@
-package com.example.thymc.logintutorial.geofence;
+package com.example.thymc.logintutorial.geo;
 
 import android.app.AlertDialog;
 import android.app.Service;

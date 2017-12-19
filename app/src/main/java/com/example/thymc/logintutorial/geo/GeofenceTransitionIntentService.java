@@ -1,9 +1,8 @@
-package com.example.thymc.logintutorial.geofence;
+package com.example.thymc.logintutorial.geo;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -15,12 +14,22 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
 import com.example.thymc.logintutorial.MapActivity;
 import com.example.thymc.logintutorial.R;
+import com.example.thymc.logintutorial.RequestServer;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
+import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,39 +51,81 @@ public class GeofenceTransitionIntentService extends IntentService {
         }
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-                geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+        //if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
+        if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER){
             List triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
-            String geofenceTransitionDetails = getGeofenceTransitionDetails(this, geofenceTransition, triggeringGeofences);
-
-            sendNotification(geofenceTransitionDetails);
-            Log.i(TAG, geofenceTransitionDetails);
+            Toast.makeText(GeofenceTransitionIntentService.this, "asd", Toast.LENGTH_SHORT).show();
+            //String geofenceTransitionDetails = getGeofenceTransitionDetails(this, geofenceTransition, triggeringGeofences);
+            notificationSender(getGeofenceTransitionDetails(this, geofenceTransition, triggeringGeofences));
+            //sendNotification();
+            //Log.i(TAG, geofenceTransitionDetails);
         } else {
             Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
         }
     }
 
-    private String getGeofenceTransitionDetails(
+    private void notificationSender(final ArrayList<String> list){
+
+        Toast.makeText(GeofenceTransitionIntentService.this, TextUtils.join(", ",  list), Toast.LENGTH_SHORT).show();
+        List<String> argList = new ArrayList<>();
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if (success) {
+                        JSONArray userList = jsonResponse.getJSONArray("username");
+                        JSONArray aKey = jsonResponse.getJSONArray("keyList");
+                        JSONArray aComment = jsonResponse.getJSONArray("commentList");
+                        //JSONArray aTime = jsonResponse.getJSONArray("timeframeList");
+
+                        for (int i=0;i<list.size();i++){
+                            for(int j = 0; j<aKey.length();j++){
+                                if(list.get(i).equals(String.valueOf(aKey.get(j)))){
+
+                                    sendNotification(String.valueOf(userList.get(j)),String.valueOf(aComment.get(j)));
+                                }
+                            }
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+        RequestServer registerRequest = new RequestServer("getGeofences",argList,responseListener);
+        RequestQueue queue = Volley.newRequestQueue(GeofenceTransitionIntentService.this);
+        queue.add(registerRequest);
+    }
+
+    private ArrayList<String> getGeofenceTransitionDetails(
             Context context,
             int geofenceTransition,
             List<Geofence> triggeringGeofences) {
 
-        String geofenceTransitionString = getTransitionString(geofenceTransition);
-        ArrayList triggeringGeofencesIdsList = new ArrayList();
+        //String geofenceTransitionString = getTransitionString(geofenceTransition);//entered yazan yer
+        //ArrayList triggeringGeofencesIdsList = new ArrayList();
+        ArrayList<String> geofencesList = new ArrayList<>();
         for (Geofence geofence : triggeringGeofences) {
-            triggeringGeofencesIdsList.add(geofence.getRequestId());
+            //triggeringGeofencesIdsList.add(geofence.getRequestId());
+            geofencesList.add(geofence.getRequestId());
         }
-        String triggeringGeofencesIdsString = TextUtils.join(", ",  triggeringGeofencesIdsList);
-
-        return geofenceTransitionString + ": " + triggeringGeofencesIdsString;
+        //bura değişecek
+        //String triggeringGeofencesIdsString = TextUtils.join(", ",  geofencesList);
+        //Toast.makeText(GeofenceTransitionIntentService.this, triggeringGeofencesIdsString, Toast.LENGTH_SHORT).show();
+        return geofencesList;
     }
 
     /**
      * Posts a notification in the notification bar when a transition is detected.
      * If the user clicks the notification, control goes to the MapActivity.
      */
-    private void sendNotification(String notificationDetails) {
+    private void sendNotification(String userName,String notificationDetails) {
         Intent notificationIntent = new Intent(getApplicationContext(), MapActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MapActivity.class);
@@ -82,10 +133,10 @@ public class GeofenceTransitionIntentService extends IntentService {
         PendingIntent notificationPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_stat_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_stat_notification))
                 .setColor(Color.RED)
-                .setContentTitle(notificationDetails)
-                .setContentText(getString(R.string.geofence_transition_notification_text))
+                .setContentTitle(userName)
+                .setContentText("Comment:"+notificationDetails)
                 .setContentIntent(notificationPendingIntent);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

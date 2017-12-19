@@ -29,7 +29,6 @@ public class Users extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //generateListContent();
         setContentView(R.layout.content_users);
 
 
