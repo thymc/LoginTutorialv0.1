@@ -18,16 +18,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity" android:label="Login Page">
+        <activity
+            android:name=".LoginActivity"
+            android:label="Login Page">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" android:label="Register Page"/>
-
-        <activity android:name=".Users" android:label="Find User"/>
+        <activity
+            android:name=".RegisterActivity"
+            android:label="Register Page" />
 
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>
@@ -40,19 +42,32 @@
             </intent-filter>
         </service>
         <service android:name=".geo.GeofenceTransitionIntentService" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".MainActivity" android:label="Home Page" />
-        <activity android:name=".MapActivity" android:label="Map"/>
+        <activity
+            android:name=".MainActivity"
+            android:label="Home Page" />
+        <activity
+            android:name=".MapActivity"
+            android:label="Map" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAfGysBY1E8tkuABuZitSoMZkZ_HNJPwyM" />
 
-        <activity android:name=".FriendRequests" />
-        <activity android:name=".FriendList"></activity>
+        <activity
+            android:name=".UserList"
+            android:label="Find User" />
+        <activity
+            android:name=".FriendRequests"
+            android:label="Friend Requests" />
+        <activity
+            android:name=".FriendList"
+            android:label="Friends" />
+        <activity android:name=".Settings" android:label="Settings"></activity>
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -22,7 +24,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendRequests extends ListActivity {
+public class FriendRequests extends ActionBarActivity {
 
     private Runnable viewParts;
     private MyListAdapter adapter;
@@ -32,42 +34,23 @@ public class FriendRequests extends ListActivity {
         super.onCreate(savedInstanceState);
         //generateListContent();
         setContentView(R.layout.content_requests);
-
+        fillList();
+        ListView lv = (ListView) findViewById(R.id.requestListView);
 
         adapter = new MyListAdapter(this,R.layout.requestlist_item, requestList);
-        setListAdapter(adapter);
+        lv.setAdapter(adapter);
 
-        viewParts = new Runnable(){
-            public void run(){
-                handler.sendEmptyMessage(0);
-            }
-        };
-
-        Thread thread =  new Thread(null, viewParts, "MagentoBackground");
-        thread.start();
     }
 
 
-    private Handler handler = new Handler()
+    private void fillList()
     {
-        public void handleMessage(Message msg)
-        {
-            // create some objects
-            // here is where you could also request data from a server
-            // and then create objects from that data.
-
-
             Intent intent = getIntent();
             ArrayList<String> argUserList = new ArrayList<>(intent.getStringArrayListExtra("requestList"));
             for(String s:argUserList){
                 requestList.add(new Request(s));
             }
-            adapter = new MyListAdapter(FriendRequests.this, R.layout.requestlist_item, requestList);
-
-            // display the list.
-            setListAdapter(adapter);
-        }
-    };
+    }
 
 
     private class MyListAdapter extends ArrayAdapter<Request> {

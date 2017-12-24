@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.thymc.logintutorial.MainActivity;
 import com.example.thymc.logintutorial.MapActivity;
 import com.example.thymc.logintutorial.R;
 import com.example.thymc.logintutorial.RequestServer;
@@ -52,7 +53,7 @@ public class GeofenceTransitionIntentService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         //if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
-        if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER){
+        if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER|| geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
             List triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
             Toast.makeText(GeofenceTransitionIntentService.this, "asd", Toast.LENGTH_SHORT).show();
@@ -126,31 +127,23 @@ public class GeofenceTransitionIntentService extends IntentService {
      * If the user clicks the notification, control goes to the MapActivity.
      */
     private void sendNotification(String userName,String notificationDetails) {
-        Intent notificationIntent = new Intent(getApplicationContext(), MapActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MapActivity.class);
-        stackBuilder.addNextIntent(notificationIntent);
-        PendingIntent notificationPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_stat_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_stat_notification))
-                .setColor(Color.RED)
-                .setContentTitle(userName)
-                .setContentText("Comment:"+notificationDetails)
-                .setContentIntent(notificationPendingIntent);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        builder.setSound(defaultSoundUri);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
 
-        // Dismiss notification once the user touches it.
-        builder.setAutoCancel(true);
+        int uniqueID = (int) System.currentTimeMillis();
+        notificationBuilder.setSmallIcon(R.drawable.ic_stat_notification);
+        notificationBuilder.setTicker("Getting Shared Location");
+        notificationBuilder.setWhen(System.currentTimeMillis());
+        notificationBuilder.setContentTitle(userName);
+        notificationBuilder.setContentText(notificationDetails);
 
-        // Get an instance of the Notification manager
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Issue the notification
-        mNotificationManager.notify(0, builder.build());
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.notify(uniqueID++,notificationBuilder.build());
     }
 
     /**

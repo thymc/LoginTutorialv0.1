@@ -86,6 +86,9 @@ public class RequestServer extends StringRequest {
                 break;
             case "getGeofences":
                 break;
+            case "info":
+                params.put("show", argList.get(0));
+                break;
         }
     }
 

@@ -228,6 +228,7 @@ public class MapActivity extends AppCompatActivity implements
             return mGeofencePendingIntent;
         }
         Intent intent = new Intent(this, GeofenceTransitionIntentService.class);
+        intent.putExtra("username", username);
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

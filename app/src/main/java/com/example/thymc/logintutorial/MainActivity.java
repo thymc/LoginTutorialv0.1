@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = (ListView)findViewById(R.id.menuListView);
-        String[] values = new String[]{"Find Users","Show Friend Requests","Show Friends"};
+        String[] values = new String[]{"Find Users","Friend Requests","Friends","Settings"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,values);
         listView.setAdapter(adapter);
@@ -77,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if(position == 2){
                     generateFriendListContent();
+                }
+                if(position == 3){
+                    Intent intent = new Intent(MainActivity.this, Settings.class);
+                    MainActivity.this.startActivity(intent);
                 }
             }
         });
@@ -114,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
 
-                        Intent intent = new Intent(MainActivity.this, Users.class);
+                        Intent intent = new Intent(MainActivity.this, UserList.class);
                         intent.putExtra("username",username);
                         intent.putExtra("userList",userList);
                         MainActivity.this.startActivity(intent);

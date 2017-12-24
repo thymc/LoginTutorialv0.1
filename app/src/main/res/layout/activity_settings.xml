@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorD"
+    tools:context="com.example.thymc.logintutorial.Settings"
+    android:orientation="vertical">
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="343dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:checked="true"
+        android:showText="true"
+        android:text="Notification"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textOff="O"
+        android:textOn="I"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:checked="true"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <Switch
+        android:id="@+id/switch2"
+        android:layout_width="343dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:showText="true"
+        android:text="Vehicle Mode"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textOff="O"
+        android:textOn="I"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:checked="false"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <Switch
+        android:id="@+id/switch3"
+        android:layout_width="343dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:checked="true"
+        android:showText="true"
+        android:text="Opportunities"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textOff="O"
+        android:textOn="I"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:checked="true"
+        tools:layout_editor_absoluteY="16dp" />
+
+</LinearLayout>

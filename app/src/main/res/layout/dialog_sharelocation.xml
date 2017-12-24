@@ -37,6 +37,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <CheckBox
+                android:id="@+id/checkBox2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="88dp"
+                android:layout_marginStart="154dp"
+                android:layout_marginTop="15dp"
+                android:text="Emergency"
+                app:layout_constraintEnd_toEndOf="@+id/message"
+                app:layout_constraintStart_toEndOf="@+id/textViewComment"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
+
             <EditText
                 android:id="@+id/editTextComment"
                 android:layout_width="fill_parent"
@@ -127,6 +140,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/radioGroupTimeFrame"/>
+
         </android.support.constraint.ConstraintLayout>
 
     </FrameLayout>

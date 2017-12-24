@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -22,7 +24,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendList extends ListActivity {
+public class FriendList extends ActionBarActivity {
 
     private Runnable viewParts;
     private MyListAdapter adapter;
@@ -32,42 +34,25 @@ public class FriendList extends ListActivity {
         super.onCreate(savedInstanceState);
         //generateListContent();
         setContentView(R.layout.content_friends);
-
+        fillList();
+        ListView lv = (ListView) findViewById(R.id.friendListView);
 
         adapter = new MyListAdapter(this,R.layout.friendlist_item, friendList);
-        setListAdapter(adapter);
+        lv.setAdapter(adapter);
 
-        viewParts = new Runnable(){
-            public void run(){
-                handler.sendEmptyMessage(0);
-            }
-        };
-
-        Thread thread =  new Thread(null, viewParts, "MagentoBackground");
-        thread.start();
     }
 
 
-    private Handler handler = new Handler()
+    private void fillList()
     {
-        public void handleMessage(Message msg)
-        {
-            // create some objects
-            // here is where you could also request data from a server
-            // and then create objects from that data.
-
-
             Intent intent = getIntent();
             ArrayList<String> argUserList = new ArrayList<>(intent.getStringArrayListExtra("friendList"));
             for(String s:argUserList){
                 friendList.add(new Friend(s));
             }
-            adapter = new MyListAdapter(FriendList.this, R.layout.friendlist_item, friendList);
 
-            // display the list.
-            setListAdapter(adapter);
-        }
-    };
+
+    }
 
 
     private class MyListAdapter extends ArrayAdapter<Friend> {
@@ -117,6 +102,14 @@ public class FriendList extends ListActivity {
                     RequestQueue queue = Volley.newRequestQueue(FriendList.this);
                     queue.add(request);*/
 
+                    finish();
+                    Intent intent2 = getIntent();
+                    Intent intent = new Intent(FriendList.this, FriendList.class);
+                    intent.putExtra("username",intent2.getStringExtra("username"));
+                    ArrayList<String> argUserList = new ArrayList<>(intent2.getStringArrayListExtra("friendList"));
+                    argUserList.remove((String) list_Txt.getText());
+                    intent.putExtra("friendList",argUserList);
+                    FriendList.this.startActivity(intent);
                 }
             });
 

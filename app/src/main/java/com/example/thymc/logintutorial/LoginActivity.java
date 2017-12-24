@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.thymc.logintutorial.geo.GeofenceTransitionIntentService;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 List<String> argList = new ArrayList<>();
-                argList.add(etUsername.getText().toString());
+                argList.add(etUsername.getText().toString().replaceAll("( )+", ""));
                 argList.add(etPassword.getText().toString());
 
                 String fcmID = FirebaseInstanceId.getInstance().getToken();
@@ -65,8 +66,9 @@ public class LoginActivity extends AppCompatActivity {
 
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                     intent.putExtra("name", name);
-                                    intent.putExtra("username", etUsername.getText().toString());
+                                    intent.putExtra("username", etUsername.getText().toString().replaceAll("( )+", ""));
                                     LoginActivity.this.startActivity(intent);
+
                                 }
                             }else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
