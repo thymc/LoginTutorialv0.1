@@ -40,7 +40,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationBuilder.setSmallIcon(R.drawable.ic_menu_send);
         notificationBuilder.setTicker("Getting Friend Request");
         notificationBuilder.setWhen(System.currentTimeMillis());
-        notificationBuilder.setContentTitle("New Friend Request");
+        notificationBuilder.setContentTitle("New Notification");
         notificationBuilder.setContentText(messageBody);
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
