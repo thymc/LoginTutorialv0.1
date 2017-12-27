@@ -38,7 +38,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         int uniqueID = 45613;
         notificationBuilder.setSmallIcon(R.drawable.ic_menu_send);
-        notificationBuilder.setTicker("Getting Friend Request");
+        notificationBuilder.setTicker("Getting Notification");
         notificationBuilder.setWhen(System.currentTimeMillis());
         notificationBuilder.setContentTitle("New Notification");
         notificationBuilder.setContentText(messageBody);
